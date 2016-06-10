@@ -22,6 +22,7 @@ EXE = .exe
 endif
 
 CXXFLAGS ?= -O1 -g -Wall -Wuninitialized 
+CXXFLAGS+=-std=c++11
 ##CXXFLAGS ?= -O3 -Wall -Wuninitialized $(ARCHFLAGS)
 CXXFLAGS += -Wno-parentheses $(addprefix -I, $(subprojects)) -DINSTALL_PREFIX='"$(prefix)"'
 CXXFLAGS += -I../architecture

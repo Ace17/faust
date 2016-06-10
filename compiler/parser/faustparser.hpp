@@ -31,10 +31,10 @@
    version 2.2 of Bison.  */
 
 #ifndef YY_YY_PARSER_FAUSTPARSER_HPP_INCLUDED
-# define YY_YY_PARSER_FAUSTPARSER_HPP_INCLUDED
+#define YY_YY_PARSER_FAUSTPARSER_HPP_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+#define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -42,154 +42,154 @@ extern int yydebug;
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
-    WITH = 258,
-    SPLIT = 259,
-    MIX = 260,
-    SEQ = 261,
-    PAR = 262,
-    REC = 263,
-    LT = 264,
-    LE = 265,
-    EQ = 266,
-    GT = 267,
-    GE = 268,
-    NE = 269,
-    ADD = 270,
-    SUB = 271,
-    OR = 272,
-    MUL = 273,
-    DIV = 274,
-    MOD = 275,
-    AND = 276,
-    XOR = 277,
-    LSH = 278,
-    RSH = 279,
-    POWOP = 280,
-    FDELAY = 281,
-    DELAY1 = 282,
-    APPL = 283,
-    DOT = 284,
-    MEM = 285,
-    PREFIX = 286,
-    INTCAST = 287,
-    FLOATCAST = 288,
-    FFUNCTION = 289,
-    FCONSTANT = 290,
-    FVARIABLE = 291,
-    BUTTON = 292,
-    CHECKBOX = 293,
-    VSLIDER = 294,
-    HSLIDER = 295,
-    NENTRY = 296,
-    VGROUP = 297,
-    HGROUP = 298,
-    TGROUP = 299,
-    HBARGRAPH = 300,
-    VBARGRAPH = 301,
-    ATTACH = 302,
-    ACOS = 303,
-    ASIN = 304,
-    ATAN = 305,
-    ATAN2 = 306,
-    COS = 307,
-    SIN = 308,
-    TAN = 309,
-    EXP = 310,
-    LOG = 311,
-    LOG10 = 312,
-    POWFUN = 313,
-    SQRT = 314,
-    ABS = 315,
-    MIN = 316,
-    MAX = 317,
-    FMOD = 318,
-    REMAINDER = 319,
-    FLOOR = 320,
-    CEIL = 321,
-    RINT = 322,
-    RDTBL = 323,
-    RWTBL = 324,
-    SELECT2 = 325,
-    SELECT3 = 326,
-    INT = 327,
-    FLOAT = 328,
-    LAMBDA = 329,
-    WIRE = 330,
-    CUT = 331,
-    ENDDEF = 332,
-    VIRG = 333,
-    LPAR = 334,
-    RPAR = 335,
-    LBRAQ = 336,
-    RBRAQ = 337,
-    LCROC = 338,
-    RCROC = 339,
-    DEF = 340,
-    IMPORT = 341,
-    COMPONENT = 342,
-    LIBRARY = 343,
-    ENVIRONMENT = 344,
-    WAVEFORM = 345,
-    IPAR = 346,
-    ISEQ = 347,
-    ISUM = 348,
-    IPROD = 349,
-    INPUTS = 350,
-    OUTPUTS = 351,
-    STRING = 352,
-    FSTRING = 353,
-    IDENT = 354,
-    EXTRA = 355,
-    DECLARE = 356,
-    CASE = 357,
-    ARROW = 358,
-    BDOC = 359,
-    EDOC = 360,
-    BEQN = 361,
-    EEQN = 362,
-    BDGM = 363,
-    EDGM = 364,
-    BLST = 365,
-    ELST = 366,
-    BMETADATA = 367,
-    EMETADATA = 368,
-    DOCCHAR = 369,
-    NOTICE = 370,
-    LISTING = 371,
-    LSTTRUE = 372,
-    LSTFALSE = 373,
-    LSTDEPENDENCIES = 374,
-    LSTMDOCTAGS = 375,
-    LSTDISTRIBUTED = 376,
-    LSTEQ = 377,
-    LSTQ = 378
-  };
+#define YYTOKENTYPE
+enum yytokentype
+{
+  WITH = 258,
+  SPLIT = 259,
+  MIX = 260,
+  SEQ = 261,
+  PAR = 262,
+  REC = 263,
+  LT = 264,
+  LE = 265,
+  EQ = 266,
+  GT = 267,
+  GE = 268,
+  NE = 269,
+  ADD = 270,
+  SUB = 271,
+  OR = 272,
+  MUL = 273,
+  DIV = 274,
+  MOD = 275,
+  AND = 276,
+  XOR = 277,
+  LSH = 278,
+  RSH = 279,
+  POWOP = 280,
+  FDELAY = 281,
+  DELAY1 = 282,
+  APPL = 283,
+  DOT = 284,
+  MEM = 285,
+  PREFIX = 286,
+  INTCAST = 287,
+  FLOATCAST = 288,
+  FFUNCTION = 289,
+  FCONSTANT = 290,
+  FVARIABLE = 291,
+  BUTTON = 292,
+  CHECKBOX = 293,
+  VSLIDER = 294,
+  HSLIDER = 295,
+  NENTRY = 296,
+  VGROUP = 297,
+  HGROUP = 298,
+  TGROUP = 299,
+  HBARGRAPH = 300,
+  VBARGRAPH = 301,
+  ATTACH = 302,
+  ACOS = 303,
+  ASIN = 304,
+  ATAN = 305,
+  ATAN2 = 306,
+  COS = 307,
+  SIN = 308,
+  TAN = 309,
+  EXP = 310,
+  LOG = 311,
+  LOG10 = 312,
+  POWFUN = 313,
+  SQRT = 314,
+  ABS = 315,
+  MIN = 316,
+  MAX = 317,
+  FMOD = 318,
+  REMAINDER = 319,
+  FLOOR = 320,
+  CEIL = 321,
+  RINT = 322,
+  RDTBL = 323,
+  RWTBL = 324,
+  SELECT2 = 325,
+  SELECT3 = 326,
+  INT = 327,
+  FLOAT = 328,
+  LAMBDA = 329,
+  WIRE = 330,
+  CUT = 331,
+  ENDDEF = 332,
+  VIRG = 333,
+  LPAR = 334,
+  RPAR = 335,
+  LBRAQ = 336,
+  RBRAQ = 337,
+  LCROC = 338,
+  RCROC = 339,
+  DEF = 340,
+  IMPORT = 341,
+  COMPONENT = 342,
+  LIBRARY = 343,
+  ENVIRONMENT = 344,
+  WAVEFORM = 345,
+  IPAR = 346,
+  ISEQ = 347,
+  ISUM = 348,
+  IPROD = 349,
+  INPUTS = 350,
+  OUTPUTS = 351,
+  STRING = 352,
+  FSTRING = 353,
+  IDENT = 354,
+  EXTRA = 355,
+  DECLARE = 356,
+  CASE = 357,
+  ARROW = 358,
+  BDOC = 359,
+  EDOC = 360,
+  BEQN = 361,
+  EEQN = 362,
+  BDGM = 363,
+  EDGM = 364,
+  BLST = 365,
+  ELST = 366,
+  BMETADATA = 367,
+  EMETADATA = 368,
+  DOCCHAR = 369,
+  NOTICE = 370,
+  LISTING = 371,
+  LSTTRUE = 372,
+  LSTFALSE = 373,
+  LSTDEPENDENCIES = 374,
+  LSTMDOCTAGS = 375,
+  LSTDISTRIBUTED = 376,
+  LSTEQ = 377,
+  LSTQ = 378
+};
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
+#if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
 #line 78 "parser/faustparser.y" /* yacc.c:1909  */
 
-	CTree* 	exp;
-	char* str;
-	string* cppstr;
-	bool b;
+  CTree* exp;
+  char* str;
+  string* cppstr;
+  bool b;
 
 #line 185 "parser/faustparser.hpp" /* yacc.c:1909  */
 };
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
+#define YYSTYPE_IS_TRIVIAL 1
+#define YYSTYPE_IS_DECLARED 1
 #endif
-
 
 extern YYSTYPE yylval;
 
-int yyparse (void);
+int yyparse(void);
 
 #endif /* !YY_YY_PARSER_FAUSTPARSER_HPP_INCLUDED  */
+

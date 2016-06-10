@@ -1,7 +1,7 @@
 /************************************************************************
- ************************************************************************
+************************************************************************
     FAUST compiler
-	Copyright (C) 2003-2004 GRAME, Centre National de Creation Musicale
+    Copyright (C) 2003-2004 GRAME, Centre National de Creation Musicale
     ---------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,10 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- ************************************************************************
- ************************************************************************/
-
-
+************************************************************************
+************************************************************************/
 
 #include <stdio.h>
 #include <assert.h>
@@ -43,264 +41,313 @@
 
 // declarations
 Tree SIMPLIFIED = tree(symbol("sigSimplifiedProp"));
-//static Tree binequiv (Tree sig, int opnum, Tree a, Tree b);
-static Tree simplification (Tree sig);
-static Tree sigMap (Tree key, tfun f, Tree t);
+// static Tree binequiv (Tree sig, int opnum, Tree a, Tree b);
+static Tree simplification(Tree sig);
+static Tree sigMap(Tree key, tfun f, Tree t);
 
 static Tree traced_simplification(Tree sig)
 {
-	assert(sig);
+  assert(sig);
 #ifdef TRACE
-    cerr << ++TABBER << "Start simplification of : " << ppsig(sig) << endl;
-	/*
-	fprintf(stderr, "\nStart simplification of : ");
-	printSignal(sig, stderr);
-	fprintf(stderr, "\n");
-	*/
+  cerr << ++TABBER << "Start simplification of : " << ppsig(sig) << endl;
+  /*
+     fprintf(stderr, "\nStart simplification of : ");
+     printSignal(sig, stderr);
+     fprintf(stderr, "\n");
+   */
 #endif
-	Tree r = simplification(sig);
-	assert(r!=0);
+  Tree r = simplification(sig);
+  assert(r != 0);
 #ifdef TRACE
-    cerr << --TABBER << "Simplification of : " << ppsig(sig) << " Returns : " << ppsig(r) << endl;
-	/*
-	fprintf(stderr, "Simplification of : ");
-	printSignal(sig, stderr);
-	fprintf(stderr, " -> ");
-	printSignal(r, stderr);
-	fprintf(stderr, "\n");
-	*/
+  cerr << --TABBER << "Simplification of : " << ppsig(sig) << " Returns : " << ppsig(r) << endl;
+  /*
+     fprintf(stderr, "Simplification of : ");
+     printSignal(sig, stderr);
+     fprintf(stderr, " -> ");
+     printSignal(r, stderr);
+     fprintf(stderr, "\n");
+   */
 #endif
-	return r;
+  return r;
 }
 
-Tree simplify (Tree sig)
+Tree simplify(Tree sig)
 {
-	return sigMap(SIMPLIFIED, traced_simplification, sig);
+  return sigMap(SIMPLIFIED, traced_simplification, sig);
 }
-
 
 // Implementation
 
-static Tree simplification (Tree sig)
+static Tree simplification(Tree sig)
 {
-	assert(sig);
-	int		opnum;
-	Tree	t1, t2, t3, t4;
+  assert(sig);
+  int opnum;
+  Tree t1, t2, t3, t4;
 
-	xtended* xt = (xtended*) getUserData(sig);
-	// primitive elements
-	if (xt)
-	{
-		//return 3;
-		vector<Tree> args;
-		for (int i=0; i<sig->arity(); i++) { args.push_back( sig->branch(i) ); }
+  xtended* xt = (xtended*)getUserData(sig);
 
-        // to avoid negative power to further normalization
-        if (xt != gPowPrim) {
-            return xt->computeSigOutput(args);
-        } else {
-            return normalizeAddTerm(xt->computeSigOutput(args));
-        }
+  // primitive elements
+  if(xt)
+  {
+    // return 3;
+    vector<Tree> args;
 
-	} else if (isSigBinOp(sig, &opnum, t1, t2)) {
+    for(int i = 0; i < sig->arity(); i++)
+    {
+      args.push_back(sig->branch(i));
+    }
 
-		BinOp* op = gBinOpTable[opnum];
+    // to avoid negative power to further normalization
+    if(xt != gPowPrim)
+    {
+      return xt->computeSigOutput(args);
+    }
+    else
+    {
+      return normalizeAddTerm(xt->computeSigOutput(args));
+    }
+  }
+  else if(isSigBinOp(sig, &opnum, t1, t2))
+  {
+    BinOp* op = gBinOpTable[opnum];
 
-		Node n1 = t1->node();
-		Node n2 = t2->node();
+    Node n1 = t1->node();
+    Node n2 = t2->node();
 
-		if (isNum(n1) && isNum(n2)) 		return tree(op->compute(n1,n2));
+    if(isNum(n1) && isNum(n2))
+      return tree(op->compute(n1, n2));
 
-		else if (op->isLeftNeutral(n1)) 	return t2;
+    else if(op->isLeftNeutral(n1))
+      return t2;
 
-		else if (op->isRightNeutral(n2)) 	return t1;
+    else if(op->isRightNeutral(n2))
+      return t1;
 
-		else 								return normalizeAddTerm(sig);
+    else
+      return normalizeAddTerm(sig);
+  }
+  else if(isSigDelay1(sig, t1))
+  {
+    return normalizeDelay1Term(t1);
+  }
+  else if(isSigFixDelay(sig, t1, t2))
+  {
+    return normalizeFixedDelayTerm(t1, t2);
+  }
+  else if(isSigIntCast(sig, t1))
+  {
+    Tree tx;
+    int i;
+    double x;
+    Node n1 = t1->node();
 
-	} else if (isSigDelay1(sig, t1)) {
+    if(isInt(n1, &i))
+      return t1;
 
-		return normalizeDelay1Term (t1);
+    if(isDouble(n1, &x))
+      return tree(int(x));
 
-	} else if (isSigFixDelay(sig, t1, t2)) {
+    if(isSigIntCast(t1, tx))
+      return t1;
 
-		return normalizeFixedDelayTerm (t1, t2);
+    return sig;
+  }
+  else if(isSigFloatCast(sig, t1))
+  {
+    Tree tx;
+    int i;
+    double x;
+    Node n1 = t1->node();
 
-	} else if (isSigIntCast(sig, t1)) {
+    if(isInt(n1, &i))
+      return tree(double(i));
 
-		Tree 	tx;
-		int		i;
-		double 	x;
-		Node 	n1 = t1->node();
+    if(isDouble(n1, &x))
+      return t1;
 
-		if (isInt(n1, &i)) 			return t1;
-		if (isDouble(n1, &x)) 		return tree(int(x));
-		if (isSigIntCast(t1, tx)) 	return t1;
+    if(isSigFloatCast(t1, tx))
+      return t1;
 
-		return sig;
+    return sig;
+  }
+  else if(isSigSelect2(sig, t1, t2, t3))
+  {
+    Node n1 = t1->node();
 
-	} else if (isSigFloatCast(sig, t1)) {
+    if(isZero(n1))
+      return t2;
 
-		Tree 	tx;
-		int		i;
-		double 	x;
-		Node 	n1 = t1->node();
+    if(isNum(n1))
+      return t3;
 
-		if (isInt(n1, &i)) 				return tree(double(i));
-		if (isDouble(n1, &x)) 			return t1;
-		if (isSigFloatCast(t1, tx)) 	return t1;
+    if(t2 == t3)
+      return t2;
 
-		return sig;
+    return sig;
+  }
+  else if(isSigSelect3(sig, t1, t2, t3, t4))
+  {
+    Node n1 = t1->node();
 
-     } else if (isSigSelect2(sig, t1, t2, t3)){
+    if(isZero(n1))
+      return t2;
 
-        Node n1 = t1->node();
+    if(isOne(n1))
+      return t3;
 
-        if (isZero(n1)) return t2;
-        if (isNum(n1))  return t3;
+    if(isNum(n1))
+      return t4;
 
-        if (t2==t3) return t2;
+    if(t3 == t4)
+      return simplification(sigSelect2(t1, t2, t3));
 
-        return sig;
-
-    } else if (isSigSelect3(sig, t1, t2, t3, t4)){
-
-        Node n1 = t1->node();
-
-        if (isZero(n1)) return t2;
-        if (isOne(n1))  return t3;
-        if (isNum(n1))  return t4;
-
-        if (t3==t4) return simplification(sigSelect2(t1,t2,t3));
-
-        return sig;
-
-	} else {
-
-		return sig;
-	}
+    return sig;
+  }
+  else
+  {
+    return sig;
+  }
 }
 
 /**
  * Recursively transform a graph by applying a function f.
  * map(f, foo[t1..tn]) = f(foo[map(f,t1)..map(f,tn)])
  */
-static Tree sigMap (Tree key, tfun f, Tree t)
+static Tree sigMap(Tree key, tfun f, Tree t)
 {
-    //printf("start sigMap\n");
-    Tree p,id,body;
+  // printf("start sigMap\n");
+  Tree p, id, body;
 
-    if (getProperty(t, key, p)) {
+  if(getProperty(t, key, p))
+  {
+    return (isNil(p)) ? t : p;  // truc pour eviter les boucles
+  }
+  else if(isRec(t, id, body))
+  {
+    setProperty(t, key, nil);   // avoid infinite loop
+    return rec(id, sigMap(key, f, body));
+  }
+  else
+  {
+    tvec br;
+    int n = t->arity();
 
-        return (isNil(p)) ? t : p;	// truc pour eviter les boucles
-
-    } else if (isRec(t, id, body)) {
-
-        setProperty(t, key, nil);	// avoid infinite loop
-        return rec(id, sigMap(key, f, body));
-
-    } else {
-        tvec br;
-        int n = t->arity();
-        for (int i = 0; i < n; i++) {
-            br.push_back(sigMap(key,f,t->branch(i)));
-        }
-
-        Tree r1 = tree(t->node(), br);
-
-        Tree r2 = f(r1);
-        if (r2 == t) {
-            setProperty(t, key, nil);
-        } else {
-            setProperty(t, key, r2);
-        }
-        return r2;
+    for(int i = 0; i < n; i++)
+    {
+      br.push_back(sigMap(key, f, t->branch(i)));
     }
+
+    Tree r1 = tree(t->node(), br);
+
+    Tree r2 = f(r1);
+
+    if(r2 == t)
+    {
+      setProperty(t, key, nil);
+    }
+    else
+    {
+      setProperty(t, key, r2);
+    }
+
+    return r2;
+  }
 }
-
-
-
-
 
 /**
  * Like SigMap, recursively transform a graph by applying a
  * function f. But here recursive trees are also renamed.
  * map(f, foo[t1..tn]) = f(foo[map(f,t1)..map(f,tn)])
  */
-static Tree sigMapRename (Tree key, Tree env, tfun f, Tree t)
+static Tree sigMapRename(Tree key, Tree env, tfun f, Tree t)
 {
-    //printf("start sigMap\n");
-    Tree p,id,body;
+  // printf("start sigMap\n");
+  Tree p, id, body;
 
-    if (getProperty(t, key, p)) {
+  if(getProperty(t, key, p))
+  {
+    return (isNil(p)) ? t : p;  // truc pour eviter les boucles
+  }
+  else if(isRec(t, id, body))
+  {
+    assert(isRef(t, id)); // controle temporaire
 
-        return (isNil(p)) ? t : p;	// truc pour eviter les boucles
+    Tree id2;
 
-    } else if (isRec(t, id, body)) {
-
-        assert(isRef(t,id)); // controle temporaire
-
-        Tree id2;
-        if (searchEnv(id, id2, env)) {
-            // déjà en cours de visite de cette recursion
-            return ref(id2);
-        } else {
-            // premiere visite de cette recursion
-            id2 = tree(Node(unique("renamed")));
-            Tree body2 = sigMapRename(key, pushEnv(id, id2, env), f, body);
-            return rec(id2,body2);
-        }
-
-    } else {
-
-        tvec br;
-        int n = t->arity();
-        for (int i = 0; i < n; i++) {
-            br.push_back( sigMapRename(key,env,f,t->branch(i)) );
-        }
-
-        Tree r1 = tree(t->node(), br);
-
-
-        Tree r2 = f(r1);
-        if (r2 == t) {
-            setProperty(t, key, nil);
-        } else {
-            setProperty(t, key, r2);
-        }
-        return r2;
+    if(searchEnv(id, id2, env))
+    {
+      // déjà en cours de visite de cette recursion
+      return ref(id2);
     }
+    else
+    {
+      // premiere visite de cette recursion
+      id2 = tree(Node(unique("renamed")));
+      Tree body2 = sigMapRename(key, pushEnv(id, id2, env), f, body);
+      return rec(id2, body2);
+    }
+  }
+  else
+  {
+    tvec br;
+    int n = t->arity();
+
+    for(int i = 0; i < n; i++)
+    {
+      br.push_back(sigMapRename(key, env, f, t->branch(i)));
+    }
+
+    Tree r1 = tree(t->node(), br);
+
+    Tree r2 = f(r1);
+
+    if(r2 == t)
+    {
+      setProperty(t, key, nil);
+    }
+    else
+    {
+      setProperty(t, key, r2);
+    }
+
+    return r2;
+  }
 }
 
 #if 0
-static void eraseProperties (Tree key, Tree t)
+static void eraseProperties(Tree key, Tree t)
 {
-	//printf("start sigMap\n");
-	Tree p,id,body;
+  // printf("start sigMap\n");
+  Tree p, id, body;
 
-	if (getProperty(t, key, p)) {
-		// already erased, nothing to do
-
-	} else if (isRec(t, id, body)) {
-		t->clearProperties();
-        Tree r=rec(id, body);
-        assert(r==t);
-		setProperty(t, key, nil);	// avoid infinite loop
-		eraseProperties(key, body);
-
-	} else {
-
-		for (int i=0; i<t->arity(); i++) {
-			eraseProperties(key,t->branch(i));
-		}
-	}
+  if(getProperty(t, key, p))
+  {
+    // already erased, nothing to do
+  }
+  else if(isRec(t, id, body))
+  {
+    t->clearProperties();
+    Tree r = rec(id, body);
+    assert(r == t);
+    setProperty(t, key, nil);   // avoid infinite loop
+    eraseProperties(key, body);
+  }
+  else
+  {
+    for(int i = 0; i < t->arity(); i++)
+    {
+      eraseProperties(key, t->branch(i));
+    }
+  }
 }
 
 void eraseAllProperties(Tree t)
 {
-    cerr << "begin eraseAllProperties" << endl;
-	eraseProperties(tree(Node(unique("erase_"))), t);
-    cerr << "end eraseAllProperties" << endl;
+  cerr << "begin eraseAllProperties" << endl;
+  eraseProperties(tree(Node(unique("erase_"))), t);
+  cerr << "end eraseAllProperties" << endl;
 }
+
 #endif
 
 /**
@@ -310,40 +357,45 @@ void eraseAllProperties(Tree t)
 
 Tree DOCTABLES = tree(symbol("DocTablesProp"));
 
-static Tree docTableConverter (Tree sig);
+static Tree docTableConverter(Tree sig);
 
 static Tree NULLENV = tree(symbol("NullRenameEnv"));
 
-Tree docTableConvertion (Tree sig)
+Tree docTableConvertion(Tree sig)
 {
-    Tree r  = sigMapRename(DOCTABLES, NULLENV, docTableConverter, sig);
-    return r;
+  Tree r = sigMapRename(DOCTABLES, NULLENV, docTableConverter, sig);
+  return r;
 }
-
 
 // Implementation
 
-static Tree docTableConverter (Tree sig)
+static Tree docTableConverter(Tree sig)
 {
-    Tree tbl, tbl2, id, id2, size, igen, isig, ridx, widx, wsig;
+  Tree tbl, tbl2, id, id2, size, igen, isig, ridx, widx, wsig;
 
-    if (isSigRDTbl(sig, tbl, ridx)) {
-        // we are in a table to convert
-        if (isSigTable(tbl, id, size, igen)) {
-            // it's a read only table
-            assert(isSigGen(igen, isig));
-            return sigDocAccessTbl(sigDocConstantTbl(size,isig),ridx);
-        } else {
-            // it's a read write table
-            assert(isSigWRTbl(tbl,id,tbl2,widx,wsig));
-            assert(isSigTable(tbl2, id2, size, igen));
-            assert(isSigGen(igen, isig));
-
-            return sigDocAccessTbl(sigDocWriteTbl(size,isig,widx,wsig),ridx);
-        }
-
-    } else {
-        // nothing to convert
-        return sig;
+  if(isSigRDTbl(sig, tbl, ridx))
+  {
+    // we are in a table to convert
+    if(isSigTable(tbl, id, size, igen))
+    {
+      // it's a read only table
+      assert(isSigGen(igen, isig));
+      return sigDocAccessTbl(sigDocConstantTbl(size, isig), ridx);
     }
+    else
+    {
+      // it's a read write table
+      assert(isSigWRTbl(tbl, id, tbl2, widx, wsig));
+      assert(isSigTable(tbl2, id2, size, igen));
+      assert(isSigGen(igen, isig));
+
+      return sigDocAccessTbl(sigDocWriteTbl(size, isig, widx, wsig), ridx);
+    }
+  }
+  else
+  {
+    // nothing to convert
+    return sig;
+  }
 }
+

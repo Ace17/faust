@@ -1,6 +1,5 @@
-
 /************************************************************************
- ************************************************************************
+************************************************************************
     FAUST compiler
     Copyright (C) 2003-2004 GRAME, Centre National de Creation Musicale
     ---------------------------------------------------------------------
@@ -17,9 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- ************************************************************************
- ************************************************************************/
-
+************************************************************************
+************************************************************************/
 
 #include "inverterSchema.h"
 #include <assert.h>
@@ -27,26 +25,23 @@
 
 using namespace std;
 
-//#define invcolor "#f44444"
-
+// #define invcolor "#f44444"
 
 /**
  * Build n cables in parallel
  */
-schema* makeInverterSchema (const string& color)
+schema* makeInverterSchema(const string& color)
 {
-    return new inverterSchema(color);
+  return new inverterSchema(color);
 }
-
 
 /**
  * Build n cables in parallel
  */
 inverterSchema::inverterSchema(const string& color)
-    : 	blockSchema (1, 1, 2.5*dWire, dWire, "-1", color, "")
+  :   blockSchema(1, 1, 2.5 * dWire, dWire, "-1", color, "")
 {
 }
-
 
 /**
  * Nothing to draw. Actual drawing will take place when the wires
@@ -54,5 +49,6 @@ inverterSchema::inverterSchema(const string& color)
  */
 void inverterSchema::draw(device& dev)
 {
-    dev.triangle(x() + dHorz, y()+0.5, width() - 2*dHorz, height()-1, fColor.c_str(),fLink.c_str(), orientation()==kLeftRight);
+  dev.triangle(x() + dHorz, y() + 0.5, width() - 2 * dHorz, height() - 1, fColor.c_str(), fLink.c_str(), orientation() == kLeftRight);
 }
+

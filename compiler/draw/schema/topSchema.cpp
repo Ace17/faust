@@ -1,7 +1,7 @@
 /************************************************************************
- ************************************************************************
+************************************************************************
     FAUST compiler
-	Copyright (C) 2003-2004 GRAME, Centre National de Creation Musicale
+    Copyright (C) 2003-2004 GRAME, Centre National de Creation Musicale
     ---------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- ************************************************************************
- ************************************************************************/
+************************************************************************
+************************************************************************/
 
 #include <stdlib.h>
 #include "topSchema.h"
@@ -30,11 +30,10 @@ using namespace std;
 /**
  * Creates a new top schema
  */
-schema* makeTopSchema (schema* s, double margin, const string& text, const string& link)
+schema* makeTopSchema(schema* s, double margin, const string& text, const string& link)
 {
-	return new topSchema (makeDecorateSchema(s, margin/2, text), margin/2, "", link);
+  return new topSchema(makeDecorateSchema(s, margin / 2, text), margin / 2, "", link);
 }
-
 
 /**
  * A topSchema is a schema surrounded by a dashed rectangle with a
@@ -42,15 +41,14 @@ schema* makeTopSchema (schema* s, double margin, const string& text, const strin
  * parameter. Arrows are added to the outputs. The constructor is
  * made private to enforce the usage of makeTopSchema.
  */
-topSchema::topSchema( schema* s, double margin, const string& text, const string& link )
-	: 	schema(0, 0, s->width()+2*margin, s->height()+2*margin),
-	 	fSchema(s),
-	 	fMargin(margin),
-	 	fText(text),
-	 	fLink(link)
+topSchema::topSchema(schema* s, double margin, const string& text, const string& link)
+  :   schema(0, 0, s->width() + 2 * margin, s->height() + 2 * margin),
+  fSchema(s),
+  fMargin(margin),
+  fText(text),
+  fLink(link)
 {
 }
-
 
 /**
  * Define the graphic position of the schema. Computes the graphic
@@ -59,10 +57,10 @@ topSchema::topSchema( schema* s, double margin, const string& text, const string
  */
 void topSchema::place(double ox, double oy, int orientation)
 {
-	beginPlace(ox, oy, orientation);
+  beginPlace(ox, oy, orientation);
 
-	fSchema->place(ox+fMargin, oy+fMargin, orientation);
-	endPlace();
+  fSchema->place(ox + fMargin, oy + fMargin, orientation);
+  endPlace();
 }
 
 /**
@@ -70,9 +68,9 @@ void topSchema::place(double ox, double oy, int orientation)
  */
 point topSchema::inputPoint(unsigned int i) const
 {
-	assert (placed());
-	assert (i < inputs());
-	exit(1);
+  assert(placed());
+  assert(i < inputs());
+  exit(1);
 }
 
 /**
@@ -80,9 +78,9 @@ point topSchema::inputPoint(unsigned int i) const
  */
 point topSchema::outputPoint(unsigned int i) const
 {
-	assert (placed());
-	assert (i < outputs());
-	exit(1);
+  assert(placed());
+  assert(i < outputs());
+  exit(1);
 }
 
 /**
@@ -91,21 +89,22 @@ point topSchema::outputPoint(unsigned int i) const
  */
 void topSchema::draw(device& dev)
 {
-    assert(placed());
+  assert(placed());
 
-    // draw a background white rectangle
-    dev.rect(x(), y(), width()-1, height()-1, "#ffffff", fLink.c_str());
+  // draw a background white rectangle
+  dev.rect(x(), y(), width() - 1, height() - 1, "#ffffff", fLink.c_str());
 
-    // draw the label
-    dev.label(x()+fMargin, y()+fMargin/2, fText.c_str());
+  // draw the label
+  dev.label(x() + fMargin, y() + fMargin / 2, fText.c_str());
 
-    fSchema->draw(dev);
+  fSchema->draw(dev);
 
-    // draw arrows at output points of schema
-    for (unsigned int i=0; i<fSchema->outputs(); i++) {
-        point p = fSchema->outputPoint(i);
-        dev.fleche(p.x, p.y, 0, orientation());
-    }
+  // draw arrows at output points of schema
+  for(unsigned int i = 0; i < fSchema->outputs(); i++)
+  {
+    point p = fSchema->outputPoint(i);
+    dev.fleche(p.x, p.y, 0, orientation());
+  }
 }
 
 /**
@@ -114,20 +113,23 @@ void topSchema::draw(device& dev)
  */
 void topSchema::collectTraits(collector& c)
 {
-    assert(placed());
-    fSchema->collectTraits(c);
+  assert(placed());
+  fSchema->collectTraits(c);
 
-    // draw arrows at output points of schema
-    for (unsigned int i=0; i<fSchema->inputs(); i++) {
-        point p = fSchema->inputPoint(i);
-        c.addOutput(p);;
-    }
+  // draw arrows at output points of schema
+  for(unsigned int i = 0; i < fSchema->inputs(); i++)
+  {
+    point p = fSchema->inputPoint(i);
+    c.addOutput(p);
+    ;
+  }
 
-    // draw arrows at output points of schema
-    for (unsigned int i=0; i<fSchema->outputs(); i++) {
-        point p = fSchema->outputPoint(i);
-        c.addInput(p);;
-    }
-
-
+  // draw arrows at output points of schema
+  for(unsigned int i = 0; i < fSchema->outputs(); i++)
+  {
+    point p = fSchema->outputPoint(i);
+    c.addInput(p);
+    ;
+  }
 }
+

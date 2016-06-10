@@ -1,7 +1,7 @@
 /************************************************************************
- ************************************************************************
+************************************************************************
     FAUST compiler
-	Copyright (C) 2003-2004 GRAME, Centre National de Creation Musicale
+    Copyright (C) 2003-2004 GRAME, Centre National de Creation Musicale
     ---------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- ************************************************************************
- ************************************************************************/
- 
+************************************************************************
+************************************************************************/
+
 #include "files.hh"
 #include "compatibility.hh"
 
@@ -33,62 +33,74 @@
 
 using namespace std;
 
-static string gCurrentDir;			///< Room to save current directory name.
+static string gCurrentDir;          ///< Room to save current directory name.
 
 /**
- *Switch back to the previously stored current directory
+ * Switch back to the previously stored current directory
  */
- 
-int	cholddir()
+
+int cholddir()
 {
-    if (chdir(gCurrentDir.c_str()) == 0) {
-		return 0;
-	} else {
-		perror("cholddir");
-		exit(errno);
-	}
+  if(chdir(gCurrentDir.c_str()) == 0)
+  {
+    return 0;
+  }
+  else
+  {
+    perror("cholddir");
+    exit(errno);
+  }
 }
 
 /**
  * Create a new directory in the current one to store the diagrams.
  * The current directory is saved to be later restored.
  */
- 
+
 int mkchdir(string dirname)
 {
-    char buffer[FAUST_PATH_MAX];
-	gCurrentDir = getcwd(buffer, FAUST_PATH_MAX);
-   
-	if (gCurrentDir.c_str() != 0) {
-		int status = mkdir(dirname.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		if (status == 0 || errno == EEXIST) {
-			if (chdir(dirname.c_str()) == 0) {
-				return 0;
-			}
-		}
-	}
-	perror("mkchdir");
-	exit(errno);
+  char buffer[FAUST_PATH_MAX];
+  gCurrentDir = getcwd(buffer, FAUST_PATH_MAX);
+
+  if(gCurrentDir.c_str() != 0)
+  {
+    int status = mkdir(dirname.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+    if(status == 0 || errno == EEXIST)
+    {
+      if(chdir(dirname.c_str()) == 0)
+      {
+        return 0;
+      }
+    }
+  }
+
+  perror("mkchdir");
+  exit(errno);
 }
 
-int	makedir(string dirname)
+int makedir(string dirname)
 {
-    char buffer[FAUST_PATH_MAX];
-	gCurrentDir = getcwd(buffer, FAUST_PATH_MAX);
-  
-	if (gCurrentDir.c_str() != 0) {
-		int status = mkdir(dirname.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		if (status == 0 || errno == EEXIST) {
-			return 0;
-		}
-	}
-	perror("makedir");
-	exit(errno);
+  char buffer[FAUST_PATH_MAX];
+  gCurrentDir = getcwd(buffer, FAUST_PATH_MAX);
+
+  if(gCurrentDir.c_str() != 0)
+  {
+    int status = mkdir(dirname.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+    if(status == 0 || errno == EEXIST)
+    {
+      return 0;
+    }
+  }
+
+  perror("makedir");
+  exit(errno);
 }
 
 void getCurrentDir()
 {
-    char buffer[FAUST_PATH_MAX];
-    gCurrentDir = getcwd(buffer, FAUST_PATH_MAX);
+  char buffer[FAUST_PATH_MAX];
+  gCurrentDir = getcwd(buffer, FAUST_PATH_MAX);
 }
 
