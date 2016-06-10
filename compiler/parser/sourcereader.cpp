@@ -36,8 +36,7 @@ extern FILE* yyin;
 extern int yylineno;
 extern const char* yyfilename;
 
-extern Tree gResult;
-extern Tree gResult2;
+Tree gResult;
 
 /**
  * Checks an argument list for containing only

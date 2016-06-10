@@ -74,8 +74,6 @@ int yyparse();
 int yyerr;
 extern int yydebug;
 extern FILE* yyin;
-Tree gResult;
-Tree gResult2;
 
 SourceReader gReader;
 
@@ -688,7 +686,7 @@ int main(int argc, char* argv[])
 
   startTiming("parser");
 
-  gResult2 = nil;
+  Tree gResult2 = nil;
   yyerr = 0;
 
   if(gInputFiles.empty())
