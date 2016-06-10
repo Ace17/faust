@@ -26,12 +26,6 @@
 #include <assert.h>
 #include <limits.h>
 
-#ifndef WIN32
-#include <unistd.h>
-#include <sys/time.h>
-#include "libgen.h"
-#endif
-
 #include "compatibility.hh"
 #include "signals.hh"
 #include "sigtype.hh"
@@ -694,24 +688,18 @@ int main(int argc, char* argv[])
 
   startTiming("parser");
 
-  list<string>::iterator s;
   gResult2 = nil;
   yyerr = 0;
 
-  if(gInputFiles.begin() == gInputFiles.end())
+  if(gInputFiles.empty())
   {
     exit(1);
   }
 
-  for(s = gInputFiles.begin(); s != gInputFiles.end(); s++)
-  {
-    if(s == gInputFiles.begin())
-    {
-      gMasterDocument = *s;
-    }
+  gMasterDocument = *gInputFiles.begin();
 
-    gResult2 = cons(importFile(tree(s->c_str())), gResult2);
-  }
+  for(auto s : gInputFiles)
+    gResult2 = cons(importFile(tree(s.c_str())), gResult2);
 
   if(yyerr > 0)
   {

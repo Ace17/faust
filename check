@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+./scripts/reformat.sh
+make -j`nproc`
+./tests/compiler/run.sh compiler
+
+echo "OK"
+
