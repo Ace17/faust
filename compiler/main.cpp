@@ -872,8 +872,6 @@ int main(int argc, char* argv[])
    *****************************************************************/
 
   ostream* dst;
-  istream* enrobage;
-  // istream* intrinsic;
 
   if(gOutputFile != "")
   {
@@ -887,7 +885,9 @@ int main(int argc, char* argv[])
 
   if(gArchFile != "")
   {
-    if((enrobage = open_arch_stream(gArchFile.c_str())))
+    auto enrobage = open_arch_stream(gArchFile.c_str());
+
+    if(enrobage)
     {
       printheader(*dst);
       C->getClass()->printLibrary(*dst);
@@ -896,23 +896,22 @@ int main(int argc, char* argv[])
 
       streamCopyUntil(*enrobage, *dst, "<<includeIntrinsic>>");
 
+      // istream* intrinsic;
 // if ( gVectorSwitch && (intrinsic = open_arch_stream("intrinsic.hh")) ) {
 // streamCopyUntilEnd(*intrinsic, *dst);
 // }
 
       if(gSchedulerSwitch)
       {
-        istream* scheduler_include = open_arch_stream("scheduler.cpp");
+        auto scheduler_include = open_arch_stream("scheduler.cpp");
 
-        if(scheduler_include)
-        {
-          streamCopy(*scheduler_include, *dst);
-        }
-        else
+        if(!scheduler_include)
         {
           cerr << "ERROR : can't include \"scheduler.cpp\", file not found" << endl;
           exit(1);
         }
+
+        streamCopy(*scheduler_include, *dst);
       }
 
       streamCopyUntil(*enrobage, *dst, "<<includeclass>>");
